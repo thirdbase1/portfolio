@@ -128,6 +128,7 @@ main.page-main { position: relative; z-index: 1; }
 }
 .avatar-flip-wrap { width: 100%; height: 100%; perspective: 800px; display: block; }
 .avatar-flip {
+  display: block;
   position: relative;
   width: 100%; height: 100%;
   transform-style: preserve-3d;
