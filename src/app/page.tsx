@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, KeyboardEvent } from "react";
+import { useState, useRef, useEffect, KeyboardEvent } from "react";
 
 const projects = [
   { title: "Open-Agent Vercel", badge: "Live", repo: "thirdbase1/open-agent_vercel", href: "https://github.com/thirdbase1/open-agent_vercel", desc: "Multi-agent coding platform on Vercel Sandbox — three-layer architecture: web UI → durable agent workflow → isolated microVM, with snapshot-based resume and hibernate. ~3.1M LOC TypeScript.", tags: ["TypeScript", "Vercel Sandbox", "Multi-Agent", "Docker"] },
@@ -48,19 +48,110 @@ const HELP_TEXT = `Available commands:
 
 type TabId = "oss" | "projects" | "ctf" | "skills" | "about";
 
+function FrameDecor() {
+  return (
+    <div className="frame-decor" aria-hidden="true">
+      <div className="frame-corner frame-corner--tl">
+        <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <ellipse cx="35" cy="45" rx="195" ry="170" fill="rgba(0,255,135,0.05)"/>
+          <ellipse cx="60" cy="75" rx="125" ry="108" fill="rgba(0,200,255,0.028)"/>
+          <path d="M 8 312 Q 28 230 72 165 Q 108 108 162 72" stroke="rgba(0,255,135,0.2)" strokeWidth="0.85" strokeLinecap="round"/>
+          <path d="M 58 205 Q 95 178 118 148 Q 88 175 58 205" fill="rgba(0,255,135,0.055)" stroke="rgba(0,255,135,0.2)" strokeWidth="0.65"/>
+          <path d="M 98 138 Q 128 118 155 95" stroke="rgba(0,200,255,0.16)" strokeWidth="0.65" strokeLinecap="round"/>
+          <ellipse cx="108" cy="125" rx="16" ry="7" transform="rotate(-42 108 125)" fill="rgba(0,255,135,0.06)" stroke="rgba(0,255,135,0.19)" strokeWidth="0.65"/>
+          <g transform="translate(138,62)">
+            <ellipse cx="0" cy="-18" rx="12" ry="21" fill="rgba(0,255,135,0.07)" stroke="rgba(0,255,135,0.22)" strokeWidth="0.7" transform="rotate(0)"/>
+            <ellipse cx="0" cy="-18" rx="12" ry="21" fill="rgba(0,255,135,0.07)" stroke="rgba(0,255,135,0.22)" strokeWidth="0.7" transform="rotate(60)"/>
+            <ellipse cx="0" cy="-18" rx="12" ry="21" fill="rgba(0,255,135,0.07)" stroke="rgba(0,255,135,0.22)" strokeWidth="0.7" transform="rotate(120)"/>
+            <ellipse cx="0" cy="-18" rx="12" ry="21" fill="rgba(0,255,135,0.06)" stroke="rgba(0,255,135,0.2)" strokeWidth="0.7" transform="rotate(180)"/>
+            <ellipse cx="0" cy="-18" rx="12" ry="21" fill="rgba(0,255,135,0.06)" stroke="rgba(0,255,135,0.2)" strokeWidth="0.7" transform="rotate(240)"/>
+            <ellipse cx="0" cy="-18" rx="12" ry="21" fill="rgba(0,255,135,0.06)" stroke="rgba(0,255,135,0.2)" strokeWidth="0.7" transform="rotate(300)"/>
+            <circle cx="0" cy="0" r="6" fill="rgba(0,200,255,0.12)" stroke="rgba(0,255,135,0.35)" strokeWidth="0.5"/>
+            <circle cx="-2.5" cy="-2" r="1.5" fill="rgba(0,255,135,0.45)"/>
+            <circle cx="2.5" cy="1" r="1.2" fill="rgba(0,255,135,0.35)"/>
+            <circle cx="0" cy="2.5" r="1.2" fill="rgba(0,255,135,0.3)"/>
+          </g>
+          <circle cx="72" cy="168" r="2" fill="rgba(0,255,135,0.35)"/>
+        </svg>
+      </div>
+      <div className="frame-corner frame-corner--bl">
+        <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <ellipse cx="48" cy="282" rx="188" ry="158" fill="rgba(0,255,135,0.058)"/>
+          <ellipse cx="72" cy="262" rx="118" ry="102" fill="rgba(0,200,255,0.034)"/>
+          <path d="M 14 308 C 48 252 98 218 148 198" stroke="rgba(0,255,135,0.19)" strokeWidth="0.82" strokeLinecap="round"/>
+          <path d="M 92 288 Q 135 265 168 240 Q 130 275 92 288" fill="rgba(0,200,255,0.048)" stroke="rgba(0,200,255,0.17)" strokeWidth="0.65"/>
+          <path d="M 42 298 Q 22 268 32 238" stroke="rgba(0,255,135,0.16)" strokeWidth="0.58" strokeLinecap="round"/>
+          <ellipse cx="62" cy="256" rx="19" ry="8" transform="rotate(-32 62 256)" fill="rgba(0,255,135,0.052)" stroke="rgba(0,255,135,0.19)" strokeWidth="0.65"/>
+          <ellipse cx="132" cy="222" rx="20" ry="7" transform="rotate(24 132 222)" fill="none" stroke="rgba(0,255,135,0.16)" strokeWidth="0.65"/>
+          <path d="M 178 268 Q 198 288 188 312" stroke="rgba(0,200,255,0.12)" strokeWidth="0.55" strokeLinecap="round"/>
+          <g transform="translate(92,256)">
+            <ellipse cx="0" cy="-24" rx="15" ry="26" fill="rgba(0,255,135,0.078)" stroke="rgba(0,255,135,0.24)" strokeWidth="0.72" transform="rotate(0)"/>
+            <ellipse cx="0" cy="-24" rx="15" ry="26" fill="rgba(0,255,135,0.072)" stroke="rgba(0,255,135,0.22)" strokeWidth="0.72" transform="rotate(60)"/>
+            <ellipse cx="0" cy="-24" rx="15" ry="26" fill="rgba(0,255,135,0.072)" stroke="rgba(0,255,135,0.22)" strokeWidth="0.72" transform="rotate(120)"/>
+            <ellipse cx="0" cy="-24" rx="15" ry="26" fill="rgba(0,255,135,0.068)" stroke="rgba(0,255,135,0.2)" strokeWidth="0.72" transform="rotate(180)"/>
+            <ellipse cx="0" cy="-24" rx="15" ry="26" fill="rgba(0,255,135,0.068)" stroke="rgba(0,255,135,0.2)" strokeWidth="0.72" transform="rotate(240)"/>
+            <ellipse cx="0" cy="-24" rx="15" ry="26" fill="rgba(0,255,135,0.068)" stroke="rgba(0,255,135,0.2)" strokeWidth="0.72" transform="rotate(300)"/>
+            <circle cx="0" cy="0" r="8" fill="rgba(0,200,255,0.11)" stroke="rgba(0,255,135,0.33)" strokeWidth="0.55"/>
+          </g>
+          <circle cx="148" cy="200" r="2.2" fill="rgba(0,255,135,0.33)"/>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function Splash({ show }: { show: boolean }) {
+  const [lineGrow, setLineGrow] = useState(false);
+  const [roleShow, setRoleShow] = useState(false);
+  useEffect(() => {
+    const t1 = setTimeout(() => setLineGrow(true), 150);
+    const t2 = setTimeout(() => setRoleShow(true), 500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+  return (
+    <div className={`splash${show ? "" : " out"}`}>
+      <div className="splash-name">Igangan <span>Godspower</span></div>
+      <div className={`splash-line${lineGrow ? " grow" : ""}`} />
+      <div className={`splash-role${roleShow ? " show" : ""}`}>Software Engineer</div>
+    </div>
+  );
+}
+
+function Avatar() {
+  return (
+    <button type="button" className="avatar-btn" aria-label="Igangan Godspower">
+      <span className="avatar-dot" style={{ top: -5, left: -5 }} />
+      <span className="avatar-dot" style={{ bottom: -5, right: -5 }} />
+      <span className="avatar-flip-wrap">
+        <span className="avatar-flip">
+          <span className="avatar-face avatar-face--front">
+            <img src="/avatar.jpg" alt="Igangan Godspower" width={72} height={72} />
+          </span>
+          <span className="avatar-face avatar-face--back">IG</span>
+        </span>
+      </span>
+    </button>
+  );
+}
+
 export default function Home() {
   const [tab, setTab] = useState<TabId>("oss");
+  const [splashShow, setSplashShow] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setSplashShow(false), 1400);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
-    <main style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <>
+      <FrameDecor />
+      <Splash show={splashShow} />
+      <main className="page-main" style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <section style={{ paddingTop: 56, paddingBottom: 24 }}>
         <div className="wrap">
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 10 }}>
-            <div style={{ width: 72, height: 72, borderRadius: 14, background: "var(--bg3)", border: "1px solid var(--border2)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 26, color: "var(--accent)", boxShadow: "0 0 24px var(--glow)", position: "relative" }}>
-              IG
-              <span style={{ position: "absolute", top: -5, left: -5, width: 4, height: 4, borderRadius: "50%", background: "var(--accent)", opacity: 0.5 }} />
-              <span style={{ position: "absolute", bottom: -5, right: -5, width: 4, height: 4, borderRadius: "50%", background: "var(--accent)", opacity: 0.5 }} />
-            </div>
+            <Avatar />
             <div>
               <h1 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 22, fontWeight: 400, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
                 Hey, I&apos;m Igangan Godspower
@@ -89,12 +180,17 @@ export default function Home() {
             <a href="/resume" style={{ display: "inline-flex", alignItems: "center", gap: 6, minHeight: 32, padding: "5px 12px", border: "1px solid rgba(0,255,135,0.25)", borderRadius: 999, background: "rgba(0,255,135,0.07)", color: "var(--accent)", fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: "0.06em" }}>
               ↓ Resume
             </a>
-            <a href="https://github.com/thirdbase1" target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, minHeight: 32, padding: "5px 12px", border: "1px solid rgba(255,255,255,0.16)", borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "var(--text)", fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: "0.06em" }}>
-              GitHub
-            </a>
-            <a href="https://x.com/one_shot_sx" target="_blank" rel="noreferrer" style={{ color: "var(--muted)", fontFamily: "'DM Mono', monospace", fontSize: 11 }}>
-              @one_shot_sx
-            </a>
+            <div className="social-icons" aria-label="Social links">
+              <a href="https://github.com/thirdbase1" target="_blank" rel="noreferrer" className="social-icon" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.38-3.37-1.38-.45-1.19-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.35 9.35 0 0 1 12 6.98c.85 0 1.7.12 2.5.35 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.59.69.49A10.08 10.08 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"/></svg>
+              </a>
+              <a href="mailto:ighanghangodspower@gmail.com" className="social-icon" aria-label="Gmail">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm-.4 4.25-7.07 5.3a.88.88 0 0 1-1.06 0L4.4 8.25V6.7l7.6 5.7 7.6-5.7v1.55Z"/></svg>
+              </a>
+              <a href="https://x.com/one_shot_sx" target="_blank" rel="noreferrer" className="social-icon" aria-label="X / Twitter">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.9 2.25h3.07l-6.7 7.66 7.88 10.42h-6.17l-4.83-6.32-5.53 6.32H3.55l7.17-8.2L3.16 2.25h6.32l4.37 5.78 5.05-5.78Zm-1.08 16.24h1.7L8.55 3.99H6.72l11.1 14.5Z"/></svg>
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -127,6 +223,7 @@ export default function Home() {
         </div>
       </footer>
     </main>
+    </>
   );
 }
 
